@@ -1,0 +1,35 @@
+{
+  "name": {
+    "en": "Solarpanels"
+  },
+  "class": "solarpanel",
+  "capabilities": [
+    "meter_power",
+    "measure_power"
+  ],
+  "energy": {
+    "meterPowerExportedCapability": "meter_power.exported"
+  },
+  "platforms": [
+    "local"
+  ],
+  "connectivity": [
+    "cloud"
+  ],
+  "images": {
+    "small": "{{driverAssetsPath}}/images/small.png",
+    "large": "{{driverAssetsPath}}/images/large.png",
+    "xlarge": "{{driverAssetsPath}}/images/xlarge.png"
+  },
+  "pair": [
+    {
+      "id": "enterkeys",
+      "template" : "list_devices",
+      "navigation" : {"next" : "add_my_devices"}
+      },
+      {
+        "id": "add_my_devices",
+        "template": "add_devices"
+      } 
+    ]
+}
