@@ -63,15 +63,13 @@
   const onConnect = async (event) => {
     event.preventDefault(); // Prevent the form from submitting and refreshing the page
 
-    //Homey.showLoadingOverlay();
+    Homey.showLoadingOverlay();
 
     const apiKey = document.getElementById("apiKey").value;
     const apiSecret = document.getElementById("apiSecret").value;
 
     Homey.emit("keys_entered", { apiSecret, apiKey })
       .then(() => {
-        Homey.setSetting("apiCredentials", { apiKey, apiSecret});
-        Homey.
         Homey.showView("list_devices");
       })
       .catch((error) => {
