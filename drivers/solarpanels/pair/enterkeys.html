@@ -49,6 +49,17 @@
       placeholder="c97c452323a8ff46d9d016bea871e05b"
       value=""
     />
+
+    <label class="homey-form-label" for="apiKey">APsystems system identity</label>
+    <input
+      class="homey-form-input"
+      type="text"
+      pattern="[0-9A-Z]{16}"
+      id="sid"
+      placeholder="B33D059007384783"
+      value=      "D24D847937402371"
+    />
+
   </div>
 
   <button
@@ -67,8 +78,9 @@
 
     const apiKey = document.getElementById("apiKey").value;
     const apiSecret = document.getElementById("apiSecret").value;
+    const sid = document.getElementById("sid").value;
 
-    Homey.emit("keys_entered", { apiSecret, apiKey })
+    Homey.emit("keys_entered", { apiSecret, apiKey, sid })
       .then(() => {
         Homey.showView("list_devices");
       })
