@@ -9,6 +9,7 @@ module.exports = class MyDevice extends Homey.Device {
    * onInit is called when the device is initialized.
    */
   async onInit() {
+    console.log('Initializing MyDevice');
       var sid='';
       var eid='';
       var apiKey='';
@@ -19,15 +20,9 @@ module.exports = class MyDevice extends Homey.Device {
       apiKey =  this.homey.settings.get("apiKey");
       apiSecret = this.homey.settings.get("apiSecret");
 
-console.log("Keys:",sid, apiKey, apiSecret, eid);
-console.log("Types:", typeof sid, typeof apiKey, typeof apiSecret, typeof eid);
-
-
-
-    this.log('MyDevice has been initialized');
 
     const settings = this.getSettings();
-    console.log(settings.pollinginterval);
+    const waitTime = settings.pollinginterval;
 
   
     if (!this.hasCapability("meter_power")) {
@@ -35,32 +30,86 @@ console.log("Types:", typeof sid, typeof apiKey, typeof apiSecret, typeof eid);
     await this.setCapabilityOptions("meter_power", {});
   }
 
-  //fetchData(request_path, request_param, http_method, api_Key, api_Secret)
+    if (!this.hasCapability("measure_power")) {
+    await this.addCapability("measure_power");
+    await this.setCapabilityOptions("measure_power", {});
+    }
+
+    console.log('MyDevice has been initialized');
+    await this.getTodaysEnergy();
+    await this.getCurrentEnergy();
+    await new Promise((r) => setTimeout(r, waitTime*60*1000));
+  //}
+}
+
+
+  async getTodaysEnergy() {
+   const dateToday = this.epochToDate(Date.now().toString());
+   console.log(dateToday);
+
+      var sid='';
+      var eid='';
+      var apiKey='';
+      var apiSecret='';
+
+      sid = this.homey.settings.get("sid");
+      eid = this.homey.settings.get("eid");
+      apiKey =  this.homey.settings.get("apiKey");
+      apiSecret = this.homey.settings.get("apiSecret");
 
      const DeviceApi = new MyApi;
-      this.registerCapabilityListener("meter_power", async (value) => {
-      ApiResult = await DeviceApi.fetchData('/user/api/v2/systems/' + sid + 
-        '/devices/inverter/batch/energy/' + eid , 
-        '?energy_level=energy&date_range=2025-05-17', 'GET', apiKey, apiSecret);
-    });
-
-    const ApiResult = await DeviceApi.fetchData('/user/api/v2/systems/' + sid + 
-        '/devices/inverter/batch/energy/' + eid , '?energy_level=energy&date_range=2025-05-17', 'GET', apiKey, apiSecret);
-    
-    console.log(ApiResult.data.energy);
-    const FormattedApiResult = ApiResult.data.energy.map(item => item.replace(/'/g,'"'));
-    const total_energy = FormattedApiResult
-    .map(item => item.split('-')[2]) // Haal het derde element op
-    .map(Number) // Zet om naar een getal
-    .reduce((acc, num) => acc + num, 0); // Tel alles op
-
+     const ApiResult = await DeviceApi.fetchData('/user/api/v2/systems/summary/' + sid , '', 'GET', apiKey, apiSecret);
+      
+     console.log(ApiResult.data.today);
+     const total_energy=ApiResult.data.today*1;
+ 
     await this.setCapabilityValue("meter_power",total_energy);
-    console.log(total_energy);
-    console.log('Store keys',this.getStoreKeys(MyDevice));
-    console.log(this.getStore(MyDevice));
+     }
+
+  async getCurrentEnergy() {
+  //  const dateToday = this.epochToDate(Date.now().toString());
+  //  console.log(dateToday);
+  //     var sid='';
+  //     var eid='';
+  //     var apiKey='';
+  //     var apiSecret='';
+
+  //     sid = this.homey.settings.get("sid");
+  //     eid = this.homey.settings.get("eid");
+  //     apiKey =  this.homey.settings.get("apiKey");
+  //     apiSecret = this.homey.settings.get("apiSecret");
+
+  //fetchData(request_path, request_param, http_method, api_Key, api_Secret)
+
+     //const DeviceApi = new MyApi;
+      // this.registerCapabilityListener("meter_power", async (value) => {
+      //     const ApiResult = await DeviceApi.fetchData('/user/api/v2/systems/' + sid + 
+      //   '/devices/inverter/batch/energy/' + eid , '?energy_level=power&date_range=' + dateToday, 'GET', apiKey, apiSecret);
+        //const ApiResult = await DeviceApi.fetchData('/user/api/v2/systems/summary/' + sid , '', 'GET', apiKey, apiSecret);
+    
+    //console.log(ApiResult.data.energy);
+    //console.log(ApiResult.data.today);
+    // const FormattedApiResult = ApiResult.data.energy.map(item => item.replace(/'/g,'"'));
+    // const current_energy = FormattedApiResult
+
+    // .map(item => item.split('-')[2]) // Haal het derde element op
+    // .map(Number) // Zet om naar een getal
+    // .reduce((acc, num) => acc + num, 0); // Tel alles op
+
+    //await this.setCapabilityValue("measure_power",current_energy);
+    //console.log(current_energy);
   }
+    // Wait the set time to prevent too much API calls
+    //await new Promise((r) => setTimeout(r, waitTime*60*1000));
 
-
+epochToDate(epoch) {
+    let date = new Date(epoch*1); //* 1 for typeconversion string to number
+    console.log(date);
+    let year = date.getFullYear();
+    let month = String(date.getMonth() + 1).padStart(2, '0'); // January is 0, so add 1
+    let day = String(date.getDate()).padStart(2, '0'); // The last bit makes sure that the result is two digits
+    return `${year}-${month}-${day}`;
+  }
 
   /**
    * onAdded is called when the user adds the device, called just after pairing.
