@@ -18,13 +18,16 @@ module.exports = class MyDriver extends Homey.Driver {
       const { ECU_ID, ECU_address } = data;
       this.homey.settings.set("ECU_ID", ECU_ID);
       this.homey.settings.set("ECU_address", ECU_address);
-      this.log('Pairing...')
+      console.log('Pairing...');
+      console.log('IP adress', ECU_address);
+      console.log('ECU ID', ECU_ID);
+
       })
 
       session.setHandler("list_devices", async () => 
       {
       const ECU_connection = new ECU_connector;
-      this.homey.log("Listing devices");
+      console.log("Listing devices");
       const ECU_ID = this.homey.settings.get("ECU_ID");
       const ECU_address =  this.homey.settings.get("ECU_address");
       const ECU_command = 'APS1100160001END';
@@ -33,7 +36,7 @@ module.exports = class MyDriver extends Homey.Driver {
     if (data.length > 16) {
         console.log("ECU detected")
     } else {
-        console.log["Error"] = "No inverters active";
+        console.log["Error"] = "No ECU detected";
         }
     devices = 
         {

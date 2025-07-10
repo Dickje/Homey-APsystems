@@ -5,6 +5,7 @@ const ECU_connector = require('./ecu_connector');
 let ECU_address = '';
 let ECU_ID = '';
 let buffer='';
+let inverters='';
 
 module.exports = class MyDevice extends Homey.Device {
 
@@ -12,7 +13,7 @@ module.exports = class MyDevice extends Homey.Device {
    * onInit is called when the device is initialized.
    */
   async onInit() {
-    console.log('ECU has been initializing');
+    console.log('ECU initializing');
 
     if (!this.hasCapability("measure_temperature")) {
     await this.addCapability("measure_temperature");
@@ -31,9 +32,12 @@ module.exports = class MyDevice extends Homey.Device {
     await this.setCapabilityOptions("meter_power.exported", {});
     }
 
-
+  
     ECU_address = this.homey.settings.get('ECU_address');
     ECU_ID = this.homey.settings.get("ECU_ID");
+    inverters = getNumberOfInverters;
+    console.log('On init ECU address', ECU_address);
+    console.log('On init ECU ID', ECU_ID);
 
     console.log('ECU has been initialized');
     pollLoop.call(this); // Get data and repeat
@@ -41,7 +45,6 @@ module.exports = class MyDevice extends Homey.Device {
 
 async getEnergyData(){ 
   console.log('Getting energy data');
-  let totaalFreq = 0;
   let totalPower = 0;
   let totalVoltage = 0;
   let totalTemperature = 0;
@@ -53,7 +56,7 @@ async getEnergyData(){
 do {
     buffer = await getECUdata('APS1100280002', ECU_ID, ECU_address);
     //Show data in dump
-    //hexdumpall(buffer); 
+    hexdumpall(buffer); 
     checkOk = checkSum(buffer, true); //'true': Enable check if inverters are online
     attempt++;
     await sleep(1000);
@@ -61,12 +64,13 @@ do {
 
     if (!checkOk) {
     console.warn(`❗ Data after ${attempt} attempts are not valid - procedure cancelled`);
-    hexdumpall(buffer);
     return; // Skip rest of procedure
   }
 
     const payload = buffer.slice(16, 194); // The relevant data
     const blockSize = 21; //Number of bytes per inverter
+    console.log('Payload', payload);
+
 
     //Get data from the response
     for (let i = 10; i < payload.length; i += blockSize) {
@@ -80,6 +84,8 @@ do {
     totalVoltage += volt;
     totalTemperature += temp;
     totalRecords++;
+
+    console.log('pwr1, pwr2, volt, temp',pwr1,pwr2, volt, temp);
     }
 
   // Recap
@@ -105,7 +111,7 @@ async getPowerData() {
 
   do {  
     buffer = await getECUdata('APS1100160001','', ECU_address);
-    //hexdumpall(buffer); 
+    hexdumpall(buffer); 
     checkOk = checkSum(buffer, false);//'false': disable check if inverters are online
     attempt++;
     await sleep(1000);
@@ -113,7 +119,6 @@ async getPowerData() {
 
   if (!checkOk) {
     console.warn(`❗ Data after ${attempt} attempts are not valid - procedure cancelled`);
-    hexdumpall(buffer);
     return; //Skip rest of procedure
   }
 
@@ -121,14 +126,17 @@ async getPowerData() {
   const currentPower = ((buffer[31] << 24) | (buffer[32] << 16) | (buffer[33] << 8) | buffer[34]) >>> 0;
   const todaysEnergy = (((buffer[35] << 24) | (buffer[36] << 16) | (buffer[37] << 8) | buffer[38]) >>> 0)/ 100;
   const invertersOnline = parseInt(buffer[49],10);
+  console.log('lifeEnergy', lifeEnergy);
+  console.log('currentPower', currentPower);
+  console.log('todaysEnergy', todaysEnergy);
   console.log('Inverters online', invertersOnline);
 
   await this.setCapabilityValue("meter_power.exported", todaysEnergy);
   await this.setCapabilityValue("measure_power", currentPower);
   if (invertersOnline == 0) {
-    this.setCapabilityValue("measure_power",0);
-    this.setCapabilityValue("measure_voltage",0);
-    this.setCapabilityValue("measure_temperature", 0);
+    this.setCapabilityValue("measure_power",null);
+    this.setCapabilityValue("measure_voltage",null);
+    this.setCapabilityValue("measure_temperature", null);
   }
 
   console.log('Lifetime energy', lifeEnergy);
@@ -144,17 +152,19 @@ async getPowerData() {
     this.log('ECU has been added');
   }
 
-  /**
-   * onSettings is called when the user updates the device's settings.
-   * @param {object} event the onSettings event data
-   * @param {object} event.oldSettings The old settings object
-   * @param {object} event.newSettings The new settings object
-   * @param {string[]} event.changedKeys An array of keys changed since the previous version
-   * @returns {Promise<string|void>} return a custom message that will be displayed
-   */
   async onSettings({ oldSettings, newSettings, changedKeys }) {
-    this.log('ECU settings where changed');
+  this.log('ECU settings were changed');
+  console.log("oldSettings:", oldSettings, "newSettings:", newSettings, "changedKeys:", changedKeys);
+
+  if (changedKeys.includes("ECU_address")) {
+    ECU_address = newSettings.ECU_address;
   }
+
+  if (changedKeys.includes("ECU ID")) {
+    ECU_ID = newSettings["ECU ID"];
+  }
+}
+
 
   /**
    * onRenamed is called when the user updates the device's name.
@@ -172,11 +182,28 @@ async getPowerData() {
     this.log('ECU has been deleted');
   }
 };
+async function getNumberOfInverters(){
+  do {  
+    buffer = await getECUdata('APS1100160001','', ECU_address);
+    hexdumpall(buffer); 
+    checkOk = checkSum(buffer, false);//'false': disable check if inverters are online
+    attempt++;
+    await sleep(1000);
+  } while (!checkOk && attempt < maxAttempts);
+
+  if (checkOk) {
+    inverters = parseInt((record[47] << 8 | record[46]), 10);
+    console.log("Number of inverters:", inverters);
+    return;
+} else {
+    console.warn(`❗ Data after ${attempt} attempts are not valid - procedure cancelled`);
+    return; // Skip rest of procedure
+}
+
+}
 
 async function hexdumpall(buffer){
-//const buffer = await bufferPromise;
- //const sliced = buffer.slice(0, buffer.length);
- const sliced = buffer;
+  const sliced = buffer;
 // 📄 Nette hexdump met ASCII:
 for (let i = 0; i < sliced.length; i += 21) {
   const blok = sliced.slice(i, i + 21); 
@@ -190,12 +217,50 @@ for (let i = 0; i < sliced.length; i += 21) {
 }
 
 async function getECUdata(command, ECU_ID, ECU_address) {
-    const ECU_command= command + ECU_ID + 'END';
-    const ECU_connection = new ECU_connector;
-    const ecudata = await (ECU_connection.fetchData(ECU_address, ECU_command));
-    const buffer = Buffer.from(ecudata.data); //Transform the data into a 'buffer'
-return buffer
+  try {
+    const ECU_command = command + ECU_ID + 'END';
+    const ECU_connection = new ECU_connector();
+    const ecudata = await ECU_connection.fetchData(ECU_address, ECU_command);
+    console.log('getECUdata result:', ecudata);
+    if (!ecudata || !ecudata.data) {
+      throw new Error("No valid ECU-data received.");
+    }
+
+    const buffer = Buffer.from(ecudata.data);
+    return buffer;
+  } catch (error) {
+    console.error("❗ Error in retreiving ECU-data:");
+
+    switch (error.code) {
+      case 'ECONNREFUSED':
+        console.error("🔌 Connection error: no respons on the IP address.");
+        newNotification("No response on the IP address. Check the IP address and ECU serial number."  );
+        break;
+      case 'ETIMEDOUT':
+        console.error("⏱️ Time-out: The ECU did not respond in time.");
+        newNotification("Time-out: The ECU did not respond in time.");
+        break;
+      case 'ENOTFOUND':
+        console.error("📡 IP address not found.");
+        newNotification("IP address not found.");
+        break;
+      default:
+        console.error("⚠️ Unknown error:", error.message);
+        newNotification("⚠️ Unknown error:", error.message);
+        break;
+    }
+
+    // Optioneel: log ook de code en stacktrace
+    if (error.code) console.error("🔹 Errorcode:", error.code);
+    console.error("🔹 Stacktrace:", error.stack);
+
+    return null;
+  }
 }
+
+
+
+
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -203,7 +268,7 @@ function sleep(ms) {
 
 function checkSum(buffer, onlineCheck) {
     if (!Buffer.isBuffer(buffer)) {
-    console.error("❗ Ongeldig bufferobject");
+    console.error("❗ Invalid bufferobject");
     return false;
   }
 
@@ -222,7 +287,6 @@ const expectedLength = parseInt(lengthAscii, 10); //Length as decimal number
   if (onlineCheck){
   //Check if all inverters were online
   const base = 32; //startbyte
-  const inverters = 8; // 8 inverters
   const indices = Array.from({ length: inverters }, (_, i) => base + i * 21);
   const allValues1 = indices.every(i => buffer[i] === 1);
 
@@ -249,6 +313,26 @@ async function pollLoop() {
   } catch (err) {
     console.warn("Polling error:", err);
   } finally {
-    setTimeout(() => pollLoop.call(this), 5 * 60 * 1000);
+    setTimeout(() => pollLoop.call(this), 2 * 60 * 1000);
   }
 }
+
+
+
+async function newNotification(notification) {
+  // const notification = {
+  //   title: "My App Notification",
+  //   excerpt: "The temperature is now *25 degrees Celsius*.",
+  // };
+
+  try {
+    await this.homey.notifications.createNotification({
+   excerpt: ('🔔 ',notification),
+});
+    console.log('Notification sent successfully!');
+  } catch (error) {
+    console.error('Error sending notification:', error);
+  }
+}
+
+
