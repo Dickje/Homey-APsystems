@@ -1,1 +1,192 @@
-{"_comment":"This file is generated. Please edit .homeycompose/app.json instead.","id":"nl.dj.aps","version":"1.1.2","compatibility":">=5.0.0","sdk":3,"platforms":["local"],"name":{"en":"APsystems Solar Panels"},"brandColor":"#FFB300","description":{"en":"Read power and energy from APsystems Solar Panels","nl":"Vermogen en productie van APsystems zonnepanelen uitlezen"},"category":"energy","permissions":[],"images":{"small":"/assets/images/small.png","large":"/assets/images/large.png"},"author":{"name":"Dick Juffermans"},"drivers":[{"name":{"en":"ECU"},"energy":{"meterPowerExportedCapability":"meter_power.exported"},"class":"solarpanel","capabilities":["measure_power","measure_voltage","measure_temperature","meter_power.exported"],"platforms":["local"],"connectivity":["lan"],"images":{"small":"/drivers/ecu/assets/images/small.png","large":"/drivers/ecu/assets/images/large.png","xlarge":"/drivers/ecu/assets/images/xlarge.png"},"measure_temperature":{"name":{"en":"My Driver"},"images":{"small":"/drivers/my_driver/assets/images/small.png","large":"/drivers/my_driver/assets/images/large.png"}},"pair":[{"id":"enterkeys"},{"id":"list_devices","template":"list_devices","navigation":{"next":"add_devices"}},{"id":"add_devices","template":"add_devices"}],"id":"ecu","settings":[{"id":"ECU_ID","type":"text","label":{"en":"The serial number of the ECU","nl":"Het serienummer van de ECU","fr":"Le numéro de série de l'ECU","de":"Die Seriennummer der ECU"},"value":"123456789012","hint":{"en":"The number is on the device.","nl":"Het nummer op het apparaat ","fr":"Le numéro sur l'appareil","de":"Die Nummer auf dem Gerät"}},{"id":"ECU_address","type":"text","label":{"en":"The IP adress of ECU","nl":"Het IP adres van de ECU","fr":"L'adresse IP de l'ECU","de":"Die IP-Adresse der ECU"},"value":"192.192.192.192","hint":{"en":"The wifi IP address.","nl":"Het wifi IP adres","fr":"L'adresse IP du Wi-Fi","de":"Die WLAN-IP-Adresse"}}]}]}
+{
+  "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
+  "id": "nl.dj.aps",
+  "version": "1.1.3",
+  "compatibility": ">=5.0.0",
+  "sdk": 3,
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "APsystems Solar Panels"
+  },
+  "brandColor": "#3580BB",
+  "description": {
+    "en": "Read power and energy from APsystems Solar Panels",
+    "nl": "Vermogen en productie van APsystems zonnepanelen uitlezen"
+  },
+  "category": "energy",
+  "permissions": [],
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png"
+  },
+  "author": {
+    "name": "Dick Juffermans",
+    "email": "dick.juffermans@gmail.com"
+  },
+  "drivers": [
+    {
+      "name": {
+        "en": "ECU"
+      },
+      "energy": {
+        "meterPowerExportedCapability": "meter_power.exported"
+      },
+      "class": "solarpanel",
+      "capabilities": [
+        "measure_voltage",
+        "measure_temperature",
+        "meter_power.exported",
+        "peak_power",
+        "measure_power",
+        "inverters_online"
+      ],
+      "capabilitiesOptions": {
+        "measure_power": {
+          "title": {
+            "en": "Power",
+            "nl": "Vermogen"
+          },
+          "icon": "assets/icons/measure_power.svg"
+        },
+        "measure_voltage": {
+          "title": {
+            "en": "Voltage",
+            "nl": "Spanning"
+          }
+        }
+      },
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/ecu/assets/images/small.png",
+        "large": "/drivers/ecu/assets/images/large.png",
+        "xlarge": "/drivers/ecu/assets/images/xlarge.png"
+      },
+      "measure_temperature": {
+        "name": {
+          "en": "My Driver"
+        },
+        "images": {
+          "small": "/drivers/my_driver/assets/images/small.png",
+          "large": "/drivers/my_driver/assets/images/large.png"
+        }
+      },
+      "repair": [
+        {
+          "id": "enterkeys"
+        }
+      ],
+      "pair": [
+        {
+          "id": "enterkeys",
+          "options": {
+            "logo": "APSlogo.png"
+          }
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "id": "ecu",
+      "settings": [
+        {
+          "id": "ECU_ID",
+          "type": "text",
+          "label": {
+            "en": "The serial number of the ECU",
+            "nl": "Het serienummer van de ECU",
+            "fr": "Le numéro de série de l'ECU",
+            "de": "Die Seriennummer der ECU"
+          },
+          "value": "123456789012",
+          "hint": {
+            "en": "The number is on the device.",
+            "nl": "Het nummer op het apparaat ",
+            "fr": "Le numéro sur l'appareil",
+            "de": "Die Nummer auf dem Gerät"
+          }
+        },
+        {
+          "id": "ECU_address",
+          "type": "text",
+          "label": {
+            "en": "The IP adress of ECU",
+            "nl": "Het IP adres van de ECU",
+            "fr": "L'adresse IP de l'ECU",
+            "de": "Die IP-Adresse der ECU"
+          },
+          "value": "192.192.192.192",
+          "hint": {
+            "en": "The wifi IP address.",
+            "nl": "Het wifi IP adres",
+            "fr": "L'adresse IP du Wi-Fi",
+            "de": "Die WLAN-IP-Adresse"
+          }
+        }
+      ]
+    }
+  ],
+  "capabilities": {
+    "inverters_online": {
+      "type": "number",
+      "title": {
+        "en": "Inverters online",
+        "nl": "Inverters online"
+      },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": ""
+      },
+      "insights": false,
+      "icon": "/assets/icons/inverters_online.svg"
+    },
+    "measure_power": {
+      "type": "number",
+      "title": {
+        "en": "Power generated",
+        "nl": "Gegenereerd vermogen"
+      },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "W",
+        "nl": "W"
+      },
+      "insights": true,
+      "icon": "/assets/icons/measure_power.svg"
+    },
+    "peak_power": {
+      "type": "number",
+      "title": {
+        "en": "Peak power",
+        "nl": "Piekvermogen"
+      },
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "W",
+        "nl": "W"
+      },
+      "insights": false,
+      "icon": "/assets/icons/peak_power.svg"
+    }
+  }
+}

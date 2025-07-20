@@ -3,7 +3,6 @@ const net = require('net');
 class ECU_connector {
 
 async fetchData(ECU_address, ECU_command) {
-  console.log(ECU_address);
   ECU_address = stripLeadingZeros(ECU_address);
   console.log('Command', ECU_command, 'to IP address', ECU_address);
 
@@ -29,7 +28,7 @@ async fetchData(ECU_address, ECU_command) {
     });
 
     client.on('data', (data) => {
-      resolve({ data });
+      resolve({data});
       client.destroy();
     });
   });

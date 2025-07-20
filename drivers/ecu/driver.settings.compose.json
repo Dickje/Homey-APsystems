@@ -1,0 +1,26 @@
+[{
+  "id": "ECU_ID",
+  "type": "text",
+  "label": { "en": "The serial number of the ECU" ,
+             "nl": "Het serienummer van de ECU",
+            "fr": "Le numéro de série de l'ECU",
+             "de": "Die Seriennummer der ECU"},
+  "value": "123456789012",
+  "hint":  { "en": "The number is on the device." ,
+             "nl": "Het nummer op het apparaat ",
+             "fr": "Le numéro sur l'appareil",
+             "de": "Die Nummer auf dem Gerät"}
+},
+{
+  "id": "ECU_address",
+  "type": "text",
+  "label": { "en": "The IP adress of ECU",
+             "nl": "Het IP adres van de ECU",
+             "fr": "L'adresse IP de l'ECU",
+             "de": "Die IP-Adresse der ECU"},
+  "value": "192.192.192.192",
+  "hint":  { "en": "The wifi IP address.",
+             "nl": "Het wifi IP adres",
+             "fr": "L'adresse IP du Wi-Fi",
+             "de": "Die WLAN-IP-Adresse"}
+}]

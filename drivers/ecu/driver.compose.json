@@ -1,17 +1,34 @@
 {
-  "name":  {"en": "ECU"},
-  
- "energy": {
+  "name": {
+    "en": "ECU"
+  },
+  "energy": {
     "meterPowerExportedCapability": "meter_power.exported"
   },
   "class": "solarpanel",
   "capabilities": [
-    "measure_power",
     "measure_voltage",
     "measure_temperature",
-    "meter_power.exported"
+    "meter_power.exported",
+    "peak_power",
+    "measure_power",
+    "inverters_online"
   ],
-
+  "capabilitiesOptions": {
+    "measure_power": {
+      "title": {
+        "en": "Power",
+        "nl": "Vermogen"
+      },
+      "icon" : "assets/icons/measure_power.svg"
+    },
+    "measure_voltage": {
+      "title": {
+        "en": "Voltage",
+        "nl": "Spanning"
+      }
+    }
+  },
   "platforms": [
     "local"
   ],
@@ -23,26 +40,37 @@
     "large": "{{driverAssetsPath}}/images/large.png",
     "xlarge": "{{driverAssetsPath}}/images/xlarge.png"
   },
-  "measure_temperature":
-    {
-  "name": { "en": "My Driver" },
-  "images": {
-    "small": "/drivers/my_driver/assets/images/small.png",
-    "large": "/drivers/my_driver/assets/images/large.png"
-  }
-},
-    "pair": [
+  "measure_temperature": {
+    "name": {
+      "en": "My Driver"
+    },
+    "images": {
+      "small": "/drivers/my_driver/assets/images/small.png",
+      "large": "/drivers/my_driver/assets/images/large.png"
+    }
+  },
+  "repair": [
     {
       "id": "enterkeys"
-     },
+    }
+  ],
+  "pair": [
     {
-      "id" : "list_devices",
-      "template": "list_devices",
-      "navigation": {"next": "add_devices"}
+      "id": "enterkeys",
+      "options": {
+        "logo": "APSlogo.png"
+      }
     },
     {
-       "id": "add_devices",
-       "template": "add_devices"
-    } 
-    ]
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": {
+      "next": "add_devices"
+      }
+    },
+    {
+      "id": "add_devices",
+      "template": "add_devices"
+    }
+  ]
 }
