@@ -1,0 +1,30 @@
+{
+  "1.0.0": {
+    "en": "Test release"
+  },
+  "1.0.1": {
+    "en": "Deleted energy display, added start- and stoptime for API calls"
+  },
+  "1.1.0": {
+    "en": "Deleted driver for APsystems web API calls, added support for ECU"
+  },
+  "1.1.1": {
+    "en": "Changed the fixed number of inverters to the real amount. Poll time reduced from 5 mins to 2."
+  },
+  "1.1.2": {
+    "en": "Added extra logging for diagnostic reports."
+  },
+  "volgende versie": {
+    "en": "You can now change the IP address and/ or ECU ID"
+  },
+  "1.1.3": {
+    "en": "You can now change the IP address and/ or ECU ID. Changed the 'power used' into 'power generated' and some minor fixes."
+  },
+  "1.1.4": {
+    "en": "App logo changed, firmware version shows, peak power for that day"
+  },
+  "1.1.5": {
+    "en": "Deleted a line of code that in some cases seem to crash the app"
+  },
+  "Volgende versie": { "en": "The peak power is now reset every day. Added a setting to pause the ECU polling within a timeframe. Added an input for the ECU polling interval."}
+}

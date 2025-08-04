@@ -1,0 +1,9 @@
+{
+    "IP_address_saved": "IP-Adresse wurde erfolgreich gespeichert.",
+    "IP_address_invalid": "Dies ist eine ungültige IP-Adresse.",
+    "ECU_ID_saved": "Die ECU-ID wurde gespeichert.",
+    "ECU_ID_invalid": "Die ECU-ID muss 12 Ziffern enthalten.",
+    "Connection_error": "Verbindungsfehler ",
+    "ECU_timeout": "Keine Antwort von der ECU",
+    "ECU_token": "ECU-Antwortdaten"
+}  

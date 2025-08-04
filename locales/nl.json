@@ -1,0 +1,9 @@
+{
+    "IP_address_saved": "Het IP adres is opgeslagen.",
+    "IP_address_invalid": "Het IP adres is ongeldig.",
+    "ECU_ID_saved": "ECU serienummer is opgeslagen.",
+    "ECU_ID_invalid": "Het serienummer moet 12 cijfers hebben.",
+    "Connection_error": "Verbindingsfout op IP adres",
+    "ECU_timeout": "Geen reactie van ECU",
+    "ECU_token": "Gegevens van de ECU respons"
+}  

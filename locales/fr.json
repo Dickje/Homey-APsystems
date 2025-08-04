@@ -1,0 +1,9 @@
+{
+    "IP_address_saved": "L'adresse IP a été enregistrée avec succès.",
+    "IP_address_invalid": "Il s'agit d'une adresse IP invalide.",
+    "ECU_ID_saved": "L'ID de l'ECU a été enregistré.",
+    "ECU_ID_invalid": "L'ID ECU doit contenir 12 chiffres.",
+    "Connection_error": "Erreur de connexion",
+    "ECU_timeout": "Aucune réponse de l'ECU",
+    "ECU_token": "Données de réponse de l'ECU"
+}  
